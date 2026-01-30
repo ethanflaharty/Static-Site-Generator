@@ -9,16 +9,49 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is a text node", TextType.bold)
         self.assertEqual(node, node2)
         
-    def test_not_eq(self):
+    def test_eq_false(self):
         node = TextNode("This is a text node", TextType.bold)
         node2 = TextNode("This is a text node", TextType.italic)
         self.assertNotEqual(node, node2)
 
-    def test_eq2(self):
-        node = TextNode("This is a text node", TextType.bold)
-        node2 = TextNode("This is a text node", TextType.bold)
+    def test_eq_false2(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        node2 = TextNode("This is a text node2", TextType.TEXT)
+        self.assertNotEqual(node, node2)
+
+    def test_eq_url(self):
+        node = TextNode("This is a text node", TextType.TEXT, "https://www.boot.dev")
+        node2 = TextNode("This is a text node", TextType.TEXT, "https://www.boot.dev")
         self.assertEqual(node, node2)
 
+    def test_repr(self):
+        node = TextNode("This is a text node", TextType.TEXT, "https://www.boot.dev")
+        self.assertEqual(
+            "TextNode(This is a text node, text, https://www.boot.dev)", repr(node)
+        )
+
+class TestTextNodeToHTMLNode(unittest.TestCase):
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.text)
+        html_node = node.text_node_to_html()
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+
+    def test_image(self):
+        node = TextNode("This is an image", TextType.image, "https://www.boot.dev")
+        html_node = node.text_node_to_html()
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.value, "")
+        self.assertEqual(
+            html_node.props,
+            {"src": "https://www.boot.dev", "alt": "This is an image"},
+        )
+
+    def test_bold(self):
+        node = TextNode("This is bold", TextType.bold)
+        html_node = node.text_node_to_html()
+        self.assertEqual(html_node.tag, "b")
+        self.assertEqual(html_node.value, "This is bold")
 
 if __name__ == "__main__":
     unittest.main()
