@@ -35,10 +35,10 @@ class TextNode:
         elif text_node.text_type == TextType.code:
             return LeafNode("code", text_node.text)
         elif text_node.text_type == TextType.link:
-            return LeafNode("a", text_node.text, "href")
+            return LeafNode("a", text_node.text, {"href": text_node.url})
         elif text_node.text_type == TextType.image:
-            return LeafNode("img", "", "src", "alt")
-        else:
-            raise Exception("TextType not formatted")
+            return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
+        raise ValueError(f"invalid text type: {text_node.text_type}")
+    
         
     
