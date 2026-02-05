@@ -1,5 +1,6 @@
 import os
 from markdown_blocks import markdown_to_html_node
+from pathlib import Path
 
 
 def generate_page(from_path, template_path, dest_path):
@@ -31,3 +32,14 @@ def extract_title(md):
         if line.startswith("# "):
             return line[2:]
     raise ValueError("no title found")
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for entry in os.listdir(dir_path_content):
+        full_path = os.path.join(dir_path_content, entry)
+        dest_path = os.path.join(dest_dir_path, entry)
+        if os.path.isfile(full_path):
+            if full_path.endswith(".md"):
+                dest_path = Path(dest_path).with_suffix(".html")
+                generate_page(full_path, template_path, dest_path)
+        else:
+            generate_pages_recursive(full_path, template_path, dest_path)
